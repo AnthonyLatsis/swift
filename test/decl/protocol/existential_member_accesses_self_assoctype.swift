@@ -942,3 +942,18 @@ do {
   let _: Array<any Class2Base & CovariantAssocTypeErasureDerived> = exist.method11()
   let _: Dictionary<String, any Class2Base & CovariantAssocTypeErasureDerived> = exist.method12()
 }
+
+protocol SettableStorageRequirements {
+  associatedtype A
+
+  var tupSelf: (Self, Self) { get set }
+  var tupAssoc: (A, A) { get set }
+}
+do {
+  var p: any P
+
+  // FIXME: Support this eventually. We can still reject assignments only and
+  // allow read-only accesses such as these.
+  let _ = p.tupSelf
+  let _ = p.tupAssoc
+}

@@ -6684,10 +6684,6 @@ bool ConstraintSystem::isMemberAvailableOnExistential(
 
   // If the type of the member references 'Self' or a 'Self'-rooted associated
   // type in non-covariant position, we cannot reference the member.
-  //
-  // N.B. We pass the module context because this check does not care about the
-  // the actual signature of the opened archetype in context, rather it cares
-  // about whether you can "hold" `baseTy.member` properly in the abstract.
   const auto info = member->findExistentialSelfReferences(
       baseTy,
       /*treatNonResultCovariantSelfAsInvariant=*/false);
@@ -6696,10 +6692,14 @@ bool ConstraintSystem::isMemberAvailableOnExistential(
     return false;
   }
 
-  // FIXME: Appropriately diagnose assignments instead.
+  // FIXME: Support this eventually. We can still reject assignments only and
+  // allow read-only accesses.
   if (auto *const storageDecl = dyn_cast<AbstractStorageDecl>(member)) {
-    if (info.hasCovariantSelfResult && storageDecl->supportsMutation())
-      return false;
+    if (info.selfRef == TypePosition::Covariant ||
+        info.assocTypeRef == TypePosition::Covariant) {
+      if (storageDecl->supportsMutation())
+        return false;
+    }
   }
 
   if (doesMemberHaveUnfulfillableConstraintsWithExistentialBase(baseTy,
