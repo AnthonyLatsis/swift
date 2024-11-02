@@ -1,0 +1,24 @@
+name: Comment on first contribution local
+
+run-name: >-
+  Comment on first contribution in
+  #${{
+      github.event_name == 'pull_request_target'
+        && github.event.pull_request.number
+        || github.event.issue.number
+  }}
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+jobs:
+  comment:
+    uses: AnthonyLatsis/swift/.github/workflows/comment_on_first_contribution.yml@master
+    with:
+      pull_request_message: |
+        Test *message* (`pull request`)
+        New line
+      issue_message: "Test *message*  (`issue`)"
