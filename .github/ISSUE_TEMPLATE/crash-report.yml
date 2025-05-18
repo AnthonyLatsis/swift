@@ -6,11 +6,12 @@
 # See https://swift.org/LICENSE.txt for license information
 # See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 
+type: Bug
 name: 💥 Report a crash
 description: >
   Report a compiler crash or other unexpected program termination caused by an
   exception.
-labels: [bug, crash, triage needed]
+labels: [crash, triage needed]
 body:
   - type: markdown
     attributes:

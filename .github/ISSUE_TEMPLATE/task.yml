@@ -6,11 +6,12 @@
 # See https://swift.org/LICENSE.txt for license information
 # See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 
+type: Task
 name: ⚙️ Track a task
 description: >
   Tasks can be used to track internal work, extract individual subtasks from a
   larger issue, and can serve as umbrella issues themselves.
-labels: [task, triage needed]
+labels: [triage needed]
 body:
   - type: markdown
     attributes:
