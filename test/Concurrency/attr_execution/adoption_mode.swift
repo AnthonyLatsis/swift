@@ -277,30 +277,30 @@ do {
     // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{19-19=async throws }}{{none}}
     test { (a, b) in                                              try await asyncThrows(a, b) }
     test { @concurrent (a, b) async throws in                     try await asyncThrows(a, b) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{19-19=async }}{{none}}
-    test { (a, b) throws -> Void in                               try await asyncThrows(a, b) }
-    test { @concurrent (a, b) async throws -> Void in             try await asyncThrows(a, b) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{23-23=async }}{{none}}
-    test { [x] (a, b) throws -> Void in                           try await asyncThrows(a, b + x) }
-    test { @concurrent [x] (a, b) async throws -> Void in         try await asyncThrows(a, b + x) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{19-19=async throws }}{{none}}
-    test { (a, b) -> Void in                                      try await asyncThrows(a, b) }
-    test { @concurrent (a, b) async throws -> Void in             try await asyncThrows(a, b) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{23-23=async throws }}{{none}}
-    test { [x] (a, b) -> Void in                                  try await asyncThrows(a, b + x) }
-    test { @concurrent [x] (a, b) async throws -> Void in         try await asyncThrows(a, b + x) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{17-17=async throws }}{{none}}
-    test { a, b -> Void in                                        try await asyncThrows(a, b) }
-    test { @concurrent a, b async throws -> Void in               try await asyncThrows(a, b) }
-    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{17-17=async throws }}{{none}}
-    test { _, _ -> Void in                                        try await asyncThrows(1, 2) }
-    test { @concurrent _, _ async throws -> Void in               try await asyncThrows(1, 2) }
 
     // Cases that will compile with '@concurrent' as is.
 
     // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
     test { (a: Int, b: Int) throws in                             try await asyncThrows(a, b) }
     test { @concurrent (a: Int, b: Int) throws in                 try await asyncThrows(a, b) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { (a, b) throws -> Void in                               try await asyncThrows(a, b) }
+    test { @concurrent (a, b) throws -> Void in                   try await asyncThrows(a, b) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { [x] (a, b) throws -> Void in                           try await asyncThrows(a, b + x) }
+    test { @concurrent [x] (a, b) throws -> Void in               try await asyncThrows(a, b + x) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { (a, b) -> Void in                                      try await asyncThrows(a, b) }
+    test { @concurrent (a, b) -> Void in                          try await asyncThrows(a, b) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { [x] (a, b) -> Void in                                  try await asyncThrows(a, b + x) }
+    test { @concurrent [x] (a, b) -> Void in                      try await asyncThrows(a, b + x) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { a, b -> Void in                                        try await asyncThrows(a, b) }
+    test { @concurrent a, b -> Void in                            try await asyncThrows(a, b) }
+    // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
+    test { _, _ -> Void in                                        try await asyncThrows(1, 2) }
+    test { @concurrent _, _ -> Void in                            try await asyncThrows(1, 2) }
     // expected-warning@+1:10 {{feature 'NonisolatedNonsendingByDefault' will cause nonisolated async closure to run on the caller's actor; use '@concurrent' to preserve behavior}}{{12-12=@concurrent }}{{none}}
     test { (a, b) throws in                                       try await asyncThrows(a, b) }
     test { @concurrent (a, b) throws in                           try await asyncThrows(a, b) }

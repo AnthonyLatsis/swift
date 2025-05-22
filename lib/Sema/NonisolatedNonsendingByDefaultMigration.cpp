@@ -186,23 +186,14 @@ void NonisolatedNonsendingByDefaultMigrationTarget::diagnose() const {
         featureName);
     diag.fixItAddAttribute(&attr, closure);
 
-    // The following cases fail to compile together with `@concurrent` in
-    // Swift 5 or Swift 6 mode due to parser and type checker behaviors:
-    // 1. - Explicit parameter list
-    //    - Explicit result type
-    //    - No explicit `async` effect
-    // 2. - Explicit parenthesized parameter list
-    //    - No capture list
-    //    - No explicit result type
-    //    - No explicit effect
+    // The following case will fail to parse correctly together with
+    // `@concurrent`:
+    // - Explicit parenthesized parameter list
+    // - No capture list
+    // - No explicit result type
+    // - No explicit effect
     //
-    // Work around these issues by adding inferred effects together with the
-    // attribute.
-
-    // If there's an explicit `async` effect, we're good.
-    if (closure->getAsyncLoc().isValid()) {
-      return;
-    }
+    // Work around this by adding inferred effects together with the attribute.
 
     auto *params = closure->getParameters();
     // FIXME: We need a better way to distinguish an implicit parameter list.
@@ -210,35 +201,15 @@ void NonisolatedNonsendingByDefaultMigrationTarget::diagnose() const {
         params->getLParenLoc().isValid() &&
         params->getLParenLoc() != closure->getStartLoc();
 
-    // If the parameter list is implicit, we're good.
-    if (!hasExplicitParenthesizedParamList) {
-      if (params->size() == 0) {
-        return;
-      } else if ((*params)[0]->isImplicit()) {
-        return;
-      }
-    }
-
-    // At this point we must proceed if there is an explicit result type.
-    // If there is both no explicit result type and the second case does not
-    // apply for any other reason, we're good.
-    if (!closure->hasExplicitResultType() &&
-        (!hasExplicitParenthesizedParamList ||
-         closure->getBracketRange().isValid() ||
-         closure->getThrowsLoc().isValid())) {
+    if (closure->getAsyncLoc().isValid() || closure->getThrowsLoc().isValid() ||
+        closure->getBracketRange().isValid() ||
+        closure->hasExplicitResultType() ||
+        !hasExplicitParenthesizedParamList) {
       return;
     }
 
     // Compute the insertion location.
-    SourceLoc effectsInsertionLoc = closure->getThrowsLoc();
-    if (effectsInsertionLoc.isInvalid() && closure->hasExplicitResultType()) {
-      effectsInsertionLoc = closure->getArrowLoc();
-    }
-
-    if (effectsInsertionLoc.isInvalid()) {
-      effectsInsertionLoc = closure->getInLoc();
-    }
-
+    auto effectsInsertionLoc = closure->getInLoc();
     ASSERT(effectsInsertionLoc);
 
     std::string fixIt = "async ";
