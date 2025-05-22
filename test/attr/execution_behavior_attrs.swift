@@ -134,8 +134,16 @@ _ = { @MainActor @concurrent in
   // expected-error@-1 {{cannot use @concurrent because function type is isolated to a global actor 'MainActor'}}
 }
 
-_ = { @concurrent () -> Int in
-  // expected-error@-1 {{@concurrent on non-async closure}}
+do {
+  let c = { @concurrent () -> Int in } // Okay, async inferred.
+  let _: () -> Int = c
+  // expected-error@-1 {{invalid conversion from 'async' function of type '() async -> Int' to synchronous function type '() -> Int'}}
+}
+
+do {
+  func acceptSync(_: () -> Void) {}
+  acceptSync { @concurrent in }
+  // expected-error@-1 {{cannot pass function of type '() async -> ()' to parameter expecting synchronous function type}}
 }
 
 // Make sure that explicit use of `@concurrent` doesn't interfere with inference of `throws` from the body.
@@ -154,6 +162,10 @@ do {
 
     await acceptsThrowing({ @concurrent in // Ok
       _ = 42
+      try await invocation.throwingFn()
+    })
+
+    await acceptsThrowing({ @concurrent () throws in
       try await invocation.throwingFn()
     })
   }

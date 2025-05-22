@@ -1410,16 +1410,20 @@ FunctionType::ExtInfo ClosureEffectsRequest::evaluate(
 
   // If either 'throws' or 'async' was explicitly specified, use that
   // set of effects.
-  bool throws = expr->getThrowsLoc().isValid();
-  bool async = expr->getAsyncLoc().isValid();
+  bool hasThrows = expr->getThrowsLoc().isValid();
+  bool hasAsync = expr->getAsyncLoc().isValid();
   bool sendable = expr->getAttrs().hasAttribute<SendableAttr>();
 
-  if (throws || async) {
+  // `@concurrent` implies async.
+  const bool isAsyncBasedOnSignature =
+      hasAsync || expr->getAttrs().hasAttribute<ConcurrentAttr>();
+
+  if (hasThrows || hasAsync) {
     return ASTExtInfoBuilder()
-      .withThrows(throws, /*FIXME:*/Type())
-      .withAsync(async)
-      .withSendable(sendable)
-      .build();
+        .withThrows(hasThrows, /*FIXME:*/ Type())
+        .withAsync(isAsyncBasedOnSignature)
+        .withSendable(sendable)
+        .build();
   }
 
   // Scan the body to determine the effects.
@@ -1427,17 +1431,11 @@ FunctionType::ExtInfo ClosureEffectsRequest::evaluate(
   if (!body)
     return ASTExtInfoBuilder().withSendable(sendable).build();
 
-  // `@concurrent` attribute is only valid on asynchronous function types.
-  bool asyncFromAttr = false;
-  if (expr->getAttrs().hasAttribute<ConcurrentAttr>()) {
-    asyncFromAttr = true;
-  }
-
   auto throwFinder = FindInnerThrows(expr);
   body->walk(throwFinder);
   return ASTExtInfoBuilder()
-      .withThrows(throwFinder.foundThrow(), /*FIXME:*/Type())
-      .withAsync(asyncFromAttr || bool(findAsyncNode(expr)))
+      .withThrows(throwFinder.foundThrow(), /*FIXME:*/ Type())
+      .withAsync(isAsyncBasedOnSignature || bool(findAsyncNode(expr)))
       .withSendable(sendable)
       .build();
 }
